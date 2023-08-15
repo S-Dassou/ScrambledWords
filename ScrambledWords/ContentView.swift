@@ -51,7 +51,7 @@ struct ContentView: View {
                         .padding(.top, 10)
                     HStack {
                         ForEach(scrambledLetters) { letter in
-                            Text(letter.text)
+                            LetterView(character: letter.text)
                         }
                     }
                     Spacer()
