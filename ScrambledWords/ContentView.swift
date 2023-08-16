@@ -11,12 +11,12 @@ struct ContentView: View {
     
     @State var guessedLetters: [Letter] = []
     @State var scrambledLetters: [Letter] = [
-        Letter(text: "R", id: 0),
-        Letter(text: "A", id: 1),
-        Letter(text: "N", id: 2),
-        Letter(text: "O", id: 3),
-        Letter(text: "G", id: 4),
-        Letter(text: "E", id: 5)
+        Letter(id: 0, text: "R"),
+        Letter(id: 1, text: "A"),
+        Letter(id: 2, text: "N"),
+        Letter(id: 3, text: "O"),
+        Letter(id: 4, text: "G"),
+        Letter(id: 5, text: "E")
     ]
     
     var body: some View {
@@ -32,11 +32,23 @@ struct ContentView: View {
                             .frame(width: 100, height: 100)
                         Spacer()
                         HStack {
+                            ForEach(guessedLetters) { letter in
                             VStack {
-                                LetterView(character: "A")
-                                Rectangle()
-                                    .fill(Color.white)
-                                    .frame(width: 25, height: 2)
+                                    LetterView(character: letter.text)
+                                    .onTapGesture {
+                                        if let index = guessedLetters.firstIndex(where: { queryLetter in
+                                            queryLetter.id == letter.id
+                                        }) {
+                                            guessedLetters.remove(at: index)
+                                        }
+                                        let newLetter = Letter(id: letter.id, text: letter.text)
+                                        scrambledLetters[letter.id] = newLetter
+                                    }
+                                
+                                    Rectangle()
+                                        .fill(Color.white)
+                                        .frame(width: 25, height: 2)
+                                }
                             }
                         }
                         .padding(.bottom, 20)
@@ -52,6 +64,19 @@ struct ContentView: View {
                     HStack {
                         ForEach(scrambledLetters) { letter in
                             LetterView(character: letter.text)
+                                .onTapGesture {
+                                    if !letter.text.isEmpty {
+                                        guessedLetters.append(letter)
+                                        let newLetter = Letter(id: letter.id, text: "")
+                                        scrambledLetters[letter.id] = newLetter
+                                    }
+                                // let guessedLetter = Letter(text: letter.text, id: letter.id)
+//                                    if !scrambledLetters[letter.id].text.isEmpty {
+//                                        guessedLetters.append(letter)
+//                                        let newLetter = Letter(id: letter.id, text: "")
+//                                        scrambledLetters[letter.id] = newLetter
+//                                    }
+                                }
                         }
                     }
                     Spacer()

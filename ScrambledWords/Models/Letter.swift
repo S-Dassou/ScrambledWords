@@ -7,6 +7,6 @@
 
 import Foundation
 struct Letter: Identifiable {
-    let text: String
     let id: Int
+    let text: String
 }
