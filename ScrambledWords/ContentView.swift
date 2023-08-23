@@ -18,6 +18,9 @@ struct ContentView: View {
         Letter(id: 4, text: "G"),
         Letter(id: 5, text: "E")
     ]
+    @State var answer = "ORANGE"
+    @State var score = 0
+    @State var showSuccess = false
     
     var body: some View {
         GeometryReader { proxy in
@@ -44,7 +47,6 @@ struct ContentView: View {
                                         let newLetter = Letter(id: letter.id, text: letter.text)
                                         scrambledLetters[letter.id] = newLetter
                                     }
-                                
                                     Rectangle()
                                         .fill(Color.white)
                                         .frame(width: 25, height: 2)
@@ -57,7 +59,7 @@ struct ContentView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8) .stroke(Color("divider"), lineWidth: 2))
                     .padding(.top, 20)
     
-                    Text("score: 0")
+                    Text("score: \(score)")
                         .font(.system(size: 15))
                         .foregroundColor(Color.white)
                         .padding(.top, 10)
@@ -65,10 +67,28 @@ struct ContentView: View {
                         ForEach(scrambledLetters) { letter in
                             LetterView(character: letter.text)
                                 .onTapGesture {
+                                    
                                     if !letter.text.isEmpty {
                                         guessedLetters.append(letter)
                                         let newLetter = Letter(id: letter.id, text: "")
                                         scrambledLetters[letter.id] = newLetter
+                                        
+                                        if guessedLetters.count == scrambledLetters.count {
+                                            let guessedWord = guessedLetters.compactMap { $0.text }.joined()
+                                            if guessedWord == answer {
+                                                score += 1
+                                                showSuccess = true
+                                            }
+                                            
+//                                            let guessedWord = guessedLetters.compactMap { queryLetter in
+//                                                return queryLetter.text
+//                                            }
+//                                            var guessedWord = ""
+//                                            for letter in guessedLetters {
+//                                                guessedWord += letter.text
+//                                            }
+                                            
+                                        }
                                     }
                                 // let guessedLetter = Letter(text: letter.text, id: letter.id)
 //                                    if !scrambledLetters[letter.id].text.isEmpty {
@@ -80,6 +100,14 @@ struct ContentView: View {
                         }
                     }
                     Spacer()
+                }
+                //layer rep. success view
+                if showSuccess {
+                    VStack {
+                        Image("tick")
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.4))
                 }
             }
         }
