@@ -7,20 +7,61 @@
 
 import SwiftUI
 
+struct Question {
+    let image: String
+    var scrambledLetters: [Letter]
+    let answer: String
+}
+
+
 struct ContentView: View {
     
     @State var guessedLetters: [Letter] = []
-    @State var scrambledLetters: [Letter] = [
-        Letter(id: 0, text: "R"),
-        Letter(id: 1, text: "A"),
-        Letter(id: 2, text: "N"),
-        Letter(id: 3, text: "O"),
-        Letter(id: 4, text: "G"),
-        Letter(id: 5, text: "E")
+    
+    @State var questions: [Question] = [
+        Question(image: "orange", scrambledLetters: [
+            Letter(id: 0, text: "R"),
+            Letter(id: 1, text: "A"),
+            Letter(id: 2, text: "N"),
+            Letter(id: 3, text: "O"),
+            Letter(id: 4, text: "G"),
+            Letter(id: 5, text: "E")
+        ], answer: "ORANGE"),
+        Question(image: "strawberry", scrambledLetters: [
+            Letter(id: 0, text: "T"),
+            Letter(id: 1, text: "S"),
+            Letter(id: 2, text: "B"),
+            Letter(id: 3, text: "A"),
+            Letter(id: 4, text: "W"),
+            Letter(id: 5, text: "R"),
+            Letter(id: 6, text: "R"),
+            Letter(id: 7, text: "E"),
+            Letter(id: 8, text: "R"),
+            Letter(id: 9, text: "Y")
+        ], answer: "STRAWBERRY"),
+        Question(image: "apple", scrambledLetters: [
+            Letter(id: 0, text: "P"),
+            Letter(id: 1, text: "P"),
+            Letter(id: 2, text: "L"),
+            Letter(id: 3, text: "E"),
+            Letter(id: 4, text: "A")
+        ], answer: "APPLE")
     ]
-    @State var answer = "ORANGE"
+    
+    @State var currentQuestionIndex = 0
+    
+//    @State var scrambledLetters: [Letter] = [
+//        Letter(id: 0, text: "R"),
+//        Letter(id: 1, text: "A"),
+//        Letter(id: 2, text: "N"),
+//        Letter(id: 3, text: "O"),
+//        Letter(id: 4, text: "G"),
+//        Letter(id: 5, text: "E")
+//    ]
+//    @State var answer = "ORANGE"
     @State var score = 0
     @State var showSuccess = false
+    @State var showFail = false
     
     var body: some View {
         GeometryReader { proxy in
@@ -30,7 +71,7 @@ struct ContentView: View {
                 VStack {
                     VStack {
                         Spacer()
-                        Image("Orange")
+                        Image(questions[currentQuestionIndex].image)
                             .resizable()
                             .frame(width: 100, height: 100)
                         Spacer()
@@ -45,7 +86,7 @@ struct ContentView: View {
                                             guessedLetters.remove(at: index)
                                         }
                                         let newLetter = Letter(id: letter.id, text: letter.text)
-                                        scrambledLetters[letter.id] = newLetter
+                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
                                     }
                                     Rectangle()
                                         .fill(Color.white)
@@ -53,6 +94,7 @@ struct ContentView: View {
                                 }
                             }
                         }
+                        .frame(height: 40)
                         .padding(.bottom, 20)
                     }
                     .frame(width: proxy.size.width * 0.9, height: proxy.size.width * 0.9)
@@ -64,20 +106,37 @@ struct ContentView: View {
                         .foregroundColor(Color.white)
                         .padding(.top, 10)
                     HStack {
-                        ForEach(scrambledLetters) { letter in
+                        ForEach(questions[currentQuestionIndex].scrambledLetters) { letter in
                             LetterView(character: letter.text)
                                 .onTapGesture {
                                     
                                     if !letter.text.isEmpty {
                                         guessedLetters.append(letter)
                                         let newLetter = Letter(id: letter.id, text: "")
-                                        scrambledLetters[letter.id] = newLetter
+                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
                                         
-                                        if guessedLetters.count == scrambledLetters.count {
+                                        if guessedLetters.count == questions[currentQuestionIndex].scrambledLetters.count {
                                             let guessedWord = guessedLetters.compactMap { $0.text }.joined()
-                                            if guessedWord == answer {
+                                            if guessedWord == questions[currentQuestionIndex].answer {
                                                 score += 1
-                                                showSuccess = true
+                                                withAnimation {
+                                                    showSuccess = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                                        showSuccess = false
+                                                        guessedLetters.removeAll()
+                                                        currentQuestionIndex += 1
+                                                    })
+                                                }
+                                            } else {
+                                                withAnimation {
+                                                    showFail = true
+                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                                        showFail = false
+                                                        guessedLetters.removeAll()
+                                                        currentQuestionIndex += 1
+                                                    })
+                                                }
                                             }
                                             
 //                                            let guessedWord = guessedLetters.compactMap { queryLetter in
@@ -87,7 +146,6 @@ struct ContentView: View {
 //                                            for letter in guessedLetters {
 //                                                guessedWord += letter.text
 //                                            }
-                                            
                                         }
                                     }
                                 // let guessedLetter = Letter(text: letter.text, id: letter.id)
@@ -96,7 +154,7 @@ struct ContentView: View {
 //                                        let newLetter = Letter(id: letter.id, text: "")
 //                                        scrambledLetters[letter.id] = newLetter
 //                                    }
-                                }
+                            }
                         }
                     }
                     Spacer()
@@ -105,6 +163,13 @@ struct ContentView: View {
                 if showSuccess {
                     VStack {
                         Image("tick")
+                    }
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    .background(Color.black.opacity(0.4))
+                }
+                if showFail {
+                    VStack {
+                        Image("cross")
                     }
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.black.opacity(0.4))
