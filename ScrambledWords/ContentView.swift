@@ -13,6 +13,40 @@ struct Question {
     let answer: String
 }
 
+extension Question {
+    static func generateQuestions() -> [Question] {
+        return [
+            Question(image: "orange", scrambledLetters: [
+                Letter(id: 0, text: "R"),
+                Letter(id: 1, text: "A"),
+                Letter(id: 2, text: "N"),
+                Letter(id: 3, text: "O"),
+                Letter(id: 4, text: "G"),
+                Letter(id: 5, text: "E")
+            ], answer: "ORANGE"),
+            Question(image: "strawberry", scrambledLetters: [
+                Letter(id: 0, text: "T"),
+                Letter(id: 1, text: "S"),
+                Letter(id: 2, text: "B"),
+                Letter(id: 3, text: "A"),
+                Letter(id: 4, text: "W"),
+                Letter(id: 5, text: "R"),
+                Letter(id: 6, text: "R"),
+                Letter(id: 7, text: "E"),
+                Letter(id: 8, text: "R"),
+                Letter(id: 9, text: "Y")
+            ], answer: "STRAWBERRY"),
+            Question(image: "apple", scrambledLetters: [
+                Letter(id: 0, text: "P"),
+                Letter(id: 1, text: "P"),
+                Letter(id: 2, text: "L"),
+                Letter(id: 3, text: "E"),
+                Letter(id: 4, text: "A")
+            ], answer: "APPLE")
+        ]
+    }
+}
+
 
 struct ContentView: View {
     
@@ -49,19 +83,10 @@ struct ContentView: View {
     ]
     
     @State var currentQuestionIndex = 0
-    
-//    @State var scrambledLetters: [Letter] = [
-//        Letter(id: 0, text: "R"),
-//        Letter(id: 1, text: "A"),
-//        Letter(id: 2, text: "N"),
-//        Letter(id: 3, text: "O"),
-//        Letter(id: 4, text: "G"),
-//        Letter(id: 5, text: "E")
-//    ]
-//    @State var answer = "ORANGE"
     @State var score = 0
     @State var showSuccess = false
     @State var showFail = false
+    @State var showScoreView = false
     
     var body: some View {
         GeometryReader { proxy in
@@ -124,8 +149,16 @@ struct ContentView: View {
                                                     showSuccess = true
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
                                                         showSuccess = false
+//                                                        for guessedLetter in guessedLetters {
+//                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
+//                                                        }
                                                         guessedLetters.removeAll()
-                                                        currentQuestionIndex += 1
+                                                        if currentQuestionIndex == questions.count - 1 {
+                                                            showScoreView = true
+                                                        } else {
+                                                            currentQuestionIndex += 1
+                                                        }
+                                                        
                                                     })
                                                 }
                                             } else {
@@ -133,11 +166,23 @@ struct ContentView: View {
                                                     showFail = true
                                                     DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
                                                         showFail = false
+//                                                        for guessedLetter in guessedLetters {
+//                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
+//                                                        }
                                                         guessedLetters.removeAll()
-                                                        currentQuestionIndex += 1
-                                                    })
+                                                        
+                                                        if currentQuestionIndex == questions.count - 1 {
+                                                            showScoreView = true
+                                                        } else {
+                                                            currentQuestionIndex += 1
+                                                        }                                                    })
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                                             
 //                                            let guessedWord = guessedLetters.compactMap { queryLetter in
 //                                                return queryLetter.text
@@ -146,17 +191,14 @@ struct ContentView: View {
 //                                            for letter in guessedLetters {
 //                                                guessedWord += letter.text
 //                                            }
-                                        }
-                                    }
+                                     
                                 // let guessedLetter = Letter(text: letter.text, id: letter.id)
 //                                    if !scrambledLetters[letter.id].text.isEmpty {
 //                                        guessedLetters.append(letter)
 //                                        let newLetter = Letter(id: letter.id, text: "")
 //                                        scrambledLetters[letter.id] = newLetter
 //                                    }
-                            }
-                        }
-                    }
+                         
                     Spacer()
                 }
                 //layer rep. success view
@@ -174,6 +216,17 @@ struct ContentView: View {
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(Color.black.opacity(0.4))
                 }
+            }
+            .sheet(isPresented: $showScoreView, onDismiss: {
+                questions = Question.generateQuestions()
+                score = 0
+                currentQuestionIndex = 0
+            }, content: { ScoreView(score: score, questionCount: questions.count)
+                    .presentationDetents([.fraction(0.4)])
+            })
+            
+            .sheet(isPresented: $showScoreView) {
+                ScoreView(score: score, questionCount: questions.count)
             }
         }
        

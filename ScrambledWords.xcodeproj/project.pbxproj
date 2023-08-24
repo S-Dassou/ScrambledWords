@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F61F8AF22A97632E003856C5 /* ScoreView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F61F8AF12A97632E003856C5 /* ScoreView.swift */; };
 		F63A56922A8B708A0006945D /* ScrambledWordsApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63A56912A8B708A0006945D /* ScrambledWordsApp.swift */; };
 		F63A56942A8B708A0006945D /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F63A56932A8B708A0006945D /* ContentView.swift */; };
 		F63A56962A8B708B0006945D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F63A56952A8B708B0006945D /* Assets.xcassets */; };
@@ -16,6 +17,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F61F8AF12A97632E003856C5 /* ScoreView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScoreView.swift; sourceTree = "<group>"; };
 		F63A568E2A8B708A0006945D /* ScrambledWords.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ScrambledWords.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F63A56912A8B708A0006945D /* ScrambledWordsApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScrambledWordsApp.swift; sourceTree = "<group>"; };
 		F63A56932A8B708A0006945D /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -61,6 +63,7 @@
 				F63A56952A8B708B0006945D /* Assets.xcassets */,
 				F63A56972A8B708B0006945D /* Preview Content */,
 				F63A569F2A8BAC7E0006945D /* Colours.xcassets */,
+				F61F8AF12A97632E003856C5 /* ScoreView.swift */,
 			);
 			path = ScrambledWords;
 			sourceTree = "<group>";
@@ -153,6 +156,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				F63A56A32A8BF6CC0006945D /* Letter.swift in Sources */,
+				F61F8AF22A97632E003856C5 /* ScoreView.swift in Sources */,
 				F63A56942A8B708A0006945D /* ContentView.swift in Sources */,
 				F63A56922A8B708A0006945D /* ScrambledWordsApp.swift in Sources */,
 			);
