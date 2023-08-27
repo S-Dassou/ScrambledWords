@@ -89,147 +89,155 @@ struct ContentView: View {
     @State var showScoreView = false
     
     var body: some View {
-        GeometryReader { proxy in
-            ZStack {
-                Color("background").ignoresSafeArea()
-                
-                VStack {
+        NavigationStack {
+            GeometryReader { proxy in
+                ZStack {
+                    Color("background").ignoresSafeArea()
+                    
                     VStack {
-                        Spacer()
-                        Image(questions[currentQuestionIndex].image)
-                            .resizable()
-                            .frame(width: 100, height: 100)
-                        Spacer()
-                        HStack {
-                            ForEach(guessedLetters) { letter in
-                            VStack {
-                                    LetterView(character: letter.text)
-                                    .onTapGesture {
-                                        if let index = guessedLetters.firstIndex(where: { queryLetter in
-                                            queryLetter.id == letter.id
-                                        }) {
-                                            guessedLetters.remove(at: index)
-                                        }
-                                        let newLetter = Letter(id: letter.id, text: letter.text)
-                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                        VStack {
+                            Spacer()
+                            Image(questions[currentQuestionIndex].image)
+                                .resizable()
+                                .frame(width: 100, height: 100)
+                            Spacer()
+                            HStack {
+                                ForEach(guessedLetters) { letter in
+                                    VStack {
+                                        LetterView(character: letter.text)
+                                            .onTapGesture {
+                                                if let index = guessedLetters.firstIndex(where: { queryLetter in
+                                                    queryLetter.id == letter.id
+                                                }) {
+                                                    guessedLetters.remove(at: index)
+                                                }
+                                                let newLetter = Letter(id: letter.id, text: letter.text)
+                                                questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                                            }
+                                        Rectangle()
+                                            .fill(Color.white)
+                                            .frame(width: 25, height: 2)
                                     }
-                                    Rectangle()
-                                        .fill(Color.white)
-                                        .frame(width: 25, height: 2)
                                 }
                             }
+                            .frame(height: 40)
+                            .padding(.bottom, 20)
                         }
-                        .frame(height: 40)
-                        .padding(.bottom, 20)
-                    }
-                    .frame(width: proxy.size.width * 0.9, height: proxy.size.width * 0.9)
-                    .overlay(RoundedRectangle(cornerRadius: 8) .stroke(Color("divider"), lineWidth: 2))
-                    .padding(.top, 20)
-    
-                    Text("score: \(score)")
-                        .font(.system(size: 15))
-                        .foregroundColor(Color.white)
-                        .padding(.top, 10)
-                    HStack {
-                        ForEach(questions[currentQuestionIndex].scrambledLetters) { letter in
-                            LetterView(character: letter.text)
-                                .onTapGesture {
-                                    
-                                    if !letter.text.isEmpty {
-                                        guessedLetters.append(letter)
-                                        let newLetter = Letter(id: letter.id, text: "")
-                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
-                                        questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                        .frame(width: proxy.size.width * 0.9, height: proxy.size.width * 0.9)
+                        .overlay(RoundedRectangle(cornerRadius: 8) .stroke(Color("divider"), lineWidth: 2))
+                        .padding(.top, 20)
+                        
+                        Text("score: \(score)")
+                            .font(.system(size: 15))
+                            .foregroundColor(Color.white)
+                            .padding(.top, 10)
+                        HStack {
+                            ForEach(questions[currentQuestionIndex].scrambledLetters) { letter in
+                                LetterView(character: letter.text)
+                                    .onTapGesture {
                                         
-                                        if guessedLetters.count == questions[currentQuestionIndex].scrambledLetters.count {
-                                            let guessedWord = guessedLetters.compactMap { $0.text }.joined()
-                                            if guessedWord == questions[currentQuestionIndex].answer {
-                                                score += 1
-                                                withAnimation {
-                                                    showSuccess = true
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                                                        showSuccess = false
-//                                                        for guessedLetter in guessedLetters {
-//                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
-//                                                        }
-                                                        guessedLetters.removeAll()
-                                                        if currentQuestionIndex == questions.count - 1 {
-                                                            showScoreView = true
-                                                        } else {
-                                                            currentQuestionIndex += 1
-                                                        }
-                                                        
-                                                    })
-                                                }
-                                            } else {
-                                                withAnimation {
-                                                    showFail = true
-                                                    DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
-                                                        showFail = false
-//                                                        for guessedLetter in guessedLetters {
-//                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
-//                                                        }
-                                                        guessedLetters.removeAll()
-                                                        
-                                                        if currentQuestionIndex == questions.count - 1 {
-                                                            showScoreView = true
-                                                        } else {
-                                                            currentQuestionIndex += 1
-                                                        }                                                    })
+                                        if !letter.text.isEmpty {
+                                            guessedLetters.append(letter)
+                                            let newLetter = Letter(id: letter.id, text: "")
+                                            questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                                            questions[currentQuestionIndex].scrambledLetters[letter.id] = newLetter
+                                            
+                                            if guessedLetters.count == questions[currentQuestionIndex].scrambledLetters.count {
+                                                let guessedWord = guessedLetters.compactMap { $0.text }.joined()
+                                                if guessedWord == questions[currentQuestionIndex].answer {
+                                                    score += 1
+                                                    withAnimation {
+                                                        showSuccess = true
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                                            showSuccess = false
+                                                            //                                                        for guessedLetter in guessedLetters {
+                                                            //                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
+                                                            //                                                        }
+                                                            guessedLetters.removeAll()
+                                                            if currentQuestionIndex == questions.count - 1 {
+                                                                showScoreView = true
+                                                            } else {
+                                                                currentQuestionIndex += 1
+                                                            }
+                                                            
+                                                        })
+                                                    }
+                                                } else {
+                                                    withAnimation {
+                                                        showFail = true
+                                                        DispatchQueue.main.asyncAfter(deadline: .now() + 1, execute: {
+                                                            showFail = false
+                                                            //                                                        for guessedLetter in guessedLetters {
+                                                            //                                                            questions[currentQuestionIndex].scrambledLetters[guessedLetter.id] = guessedLetter
+                                                            //                                                        }
+                                                            guessedLetters.removeAll()
+                                                            
+                                                            if currentQuestionIndex == questions.count - 1 {
+                                                                showScoreView = true
+                                                            } else {
+                                                                currentQuestionIndex += 1
+                                                            }                                                    })
+                                                    }
                                                 }
                                             }
                                         }
                                     }
-                                }
                             }
                         }
-                                            
-//                                            let guessedWord = guessedLetters.compactMap { queryLetter in
-//                                                return queryLetter.text
-//                                            }
-//                                            var guessedWord = ""
-//                                            for letter in guessedLetters {
-//                                                guessedWord += letter.text
-//                                            }
-                                     
-                                // let guessedLetter = Letter(text: letter.text, id: letter.id)
-//                                    if !scrambledLetters[letter.id].text.isEmpty {
-//                                        guessedLetters.append(letter)
-//                                        let newLetter = Letter(id: letter.id, text: "")
-//                                        scrambledLetters[letter.id] = newLetter
-//                                    }
-                         
-                    Spacer()
-                }
-                //layer rep. success view
-                if showSuccess {
-                    VStack {
-                        Image("tick")
+                        
+                        //                                            let guessedWord = guessedLetters.compactMap { queryLetter in
+                        //                                                return queryLetter.text
+                        //                                            }
+                        //                                            var guessedWord = ""
+                        //                                            for letter in guessedLetters {
+                        //                                                guessedWord += letter.text
+                        //                                            }
+                        
+                        // let guessedLetter = Letter(text: letter.text, id: letter.id)
+                        //                                    if !scrambledLetters[letter.id].text.isEmpty {
+                        //                                        guessedLetters.append(letter)
+                        //                                        let newLetter = Letter(id: letter.id, text: "")
+                        //                                        scrambledLetters[letter.id] = newLetter
+                        //                                    }
+                        
+                        Spacer()
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.4))
-                }
-                if showFail {
-                    VStack {
-                        Image("cross")
+                    //layer rep. success view
+                    if showSuccess {
+                        VStack {
+                            Image("tick")
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black.opacity(0.4))
                     }
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-                    .background(Color.black.opacity(0.4))
+                    if showFail {
+                        VStack {
+                            Image("cross")
+                        }
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        .background(Color.black.opacity(0.4))
+                    }
                 }
-            }
-            .sheet(isPresented: $showScoreView, onDismiss: {
-                questions = Question.generateQuestions()
-                score = 0
-                currentQuestionIndex = 0
-            }, content: { ScoreView(score: score, questionCount: questions.count)
-                    .presentationDetents([.fraction(0.4)])
-            })
-            
-            .sheet(isPresented: $showScoreView) {
-                ScoreView(score: score, questionCount: questions.count)
+                .fullScreenCover(isPresented: $showScoreView) {
+                    questions = Question.generateQuestions()
+                    score = 0
+                    currentQuestionIndex = 0
+                } content: {
+                    ScoreView(score: score, questionCount: questions.count, showScoreView: $showScoreView)
+                }
+                //            .sheet(isPresented: $showScoreView, onDismiss: {
+                //                questions = Question.generateQuestions()
+                //                score = 0
+                //                currentQuestionIndex = 0
+                //            }, content: { ScoreView(score: score, questionCount: questions.count)
+                //                    .presentationDetents([.fraction(0.4)])
+                //            })
+                //
+                //            .sheet(isPresented: $showScoreView) {
+                //                ScoreView(score: score, questionCount: questions.count)
+                //            }
             }
         }
-       
     }
 }
 

@@ -60,10 +60,10 @@
 				F63A56A12A8BF6BB0006945D /* Models */,
 				F63A56912A8B708A0006945D /* ScrambledWordsApp.swift */,
 				F63A56932A8B708A0006945D /* ContentView.swift */,
+				F61F8AF12A97632E003856C5 /* ScoreView.swift */,
 				F63A56952A8B708B0006945D /* Assets.xcassets */,
 				F63A56972A8B708B0006945D /* Preview Content */,
 				F63A569F2A8BAC7E0006945D /* Colours.xcassets */,
-				F61F8AF12A97632E003856C5 /* ScoreView.swift */,
 			);
 			path = ScrambledWords;
 			sourceTree = "<group>";
